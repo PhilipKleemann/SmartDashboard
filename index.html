@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Seattle Waste Equity Dashboard</title>
+  <title>Seattle Waste Dumpings</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Mapbox CSS -->
@@ -15,8 +15,7 @@
 <body data-map="final">
 
   <div id="sidebar">
-    <h2>Seattle Waste Equity Dashboard</h2>
-
+    <h2>Seattle Waste Dumpings</h2>
     <div id="legend">
   <h3>Legend</h3>
 
@@ -43,7 +42,9 @@
   </div>
 </div>
 
-    <div id="chart"></div>
+    <div id="chart">
+      <canvas id="dumpingChart"></canvas>
+    </div>
 
     <button id="reset">Reset Map</button>
   </div>

@@ -92,7 +92,8 @@ html, body {
 .legend-color[data-level="high"] { background-color: #253494; }
 
 #reset {
-
+  position: fixed;
+  bottom: 20px; 
   padding: 10px 15px;
   font-weight: bold;
   background: linear-gradient(135deg, #1f6feb, #1158c7);
@@ -112,12 +113,6 @@ html, body {
 #map {
   flex: 1;
   height: 100vh;
-}
-
-#chart p {
-  font-size: 14px;
-  color: #2C3E50;
-  font-weight: bold;
 }
 
 /* Zoom button container */
