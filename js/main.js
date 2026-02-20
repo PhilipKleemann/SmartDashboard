@@ -116,17 +116,17 @@ map.on('load', async () => {
     const count = e.features[0].properties.dumping_count;
     map.getCanvas().style.cursor = 'pointer';
     document.querySelector('#legend .legend-title').textContent =
-      `Amount of Neighborhood Dumpings: ${name} (${count})`;
+      `Dumpings: ${name} (${count})`;
   });
 
   map.on('mouseleave', 'neighborhoods-layer', () => {
     map.getCanvas().style.cursor = '';
-    document.querySelector('#legend .legend-title').textContent = 'Neighborhood Dumpings';
+    document.querySelector('#legend .legend-title').textContent = 'Dumpings:';
   });
 
   // Reset button
   document.getElementById('reset').addEventListener('click', () => {
-    map.flyTo({ center: [-122.33, 47.60], zoom: 10.7 });
+    map.flyTo({ center: [-122.33, 47.61], zoom: 10.7 });
   });
 
 });
