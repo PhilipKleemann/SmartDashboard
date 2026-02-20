@@ -10,7 +10,7 @@ Live Webmap:
 [Click here to view the map](https://philipkleemann.github.io/SmartDashboard/)
 
 ---
-
+ 
 ## Data Source Used
 
 - [Seattle Open Data](https://data.seattle.gov/)
