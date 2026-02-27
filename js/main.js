@@ -18,6 +18,7 @@ map.addControl(new mapboxgl.NavigationControl());
 map.on('load', async () => {
   const neighborhoods = await fetch('assets/neighborhoods.geojson').then(res => res.json());
   const dumpingData = await fetch('assets/dumping.geojson').then(res => res.json());
+  const equityIndex = await fetch('assets/equity_index.geojson').then(res => res.json());
 
   // Count dumpings per neighborhood
   neighborhoods.features.forEach(n => {
@@ -25,33 +26,37 @@ map.on('load', async () => {
     n.properties.dumping_count = count;
   });
 
+  // Count dumpings per equity tract (for correlation with vulnerability)
+  equityIndex.features.forEach(tract => {
+    const count = dumpingData.features.filter(d => turf.booleanPointInPolygon(d, tract)).length;
+    tract.properties.dumping_count = count;
+  });
+
   // Assign IDs for hover highlighting
   neighborhoods.features.forEach((f, i) => f.id = i);
-
-  const counts = neighborhoods.features.map(f => f.properties.dumping_count);
-  const maxCount = Math.max(...counts);
-
+  equityIndex.features.forEach((f, i) => f.id = 'eq-' + i);
 
   // Add Mapbox sources/layers
   map.addSource('neighborhoods', { type: 'geojson', data: neighborhoods });
+  map.addSource('equity', { type: 'geojson', data: equityIndex });
   map.addSource('dumping', { type: 'geojson', data: 'assets/dumping.geojson' });
   map.addSource('underdrains', { type: 'geojson', data: 'assets/underdrains.geojson' });
-  
-  // Choropleth
+
+  // Equity Index choropleth only (composite quintile — most disadvantage = darkest)
   map.addLayer({
-    id: 'neighborhoods-layer',
+    id: 'equity-layer',
     type: 'fill',
-    source: 'neighborhoods',
+    source: 'equity',
     paint: {
       'fill-color': [
-        'interpolate',
-        ['linear'],
-        ['get', 'dumping_count'],
-        0, '#ffffcc',
-        Math.ceil(maxCount * 0.25), '#a1dab4',
-        Math.ceil(maxCount * 0.5), '#41b6c4',
-        Math.ceil(maxCount * 0.75), '#2c7fb8',
-        maxCount, '#253494'
+        'match',
+        ['get', 'COMPOSITE_QUINTILE'],
+        'Highest Equity Priority', '#253494',
+        'Second Highest', '#2c7fb8',
+        'Middle', '#41b6c4',
+        'Second Lowest', '#a1dab4',
+        'Lowest', '#ffffcc',
+        '#b0b0b0'
       ],
       'fill-opacity': 0.6
     }
@@ -81,18 +86,14 @@ map.on('load', async () => {
           'interpolate',
           ['linear'],
           ['zoom'],
-          9, ['*', ['get', 'height'], 6],   // BIG exaggeration when zoomed out
-          11, ['*', ['get', 'height'], 3],
-          13, ['get', 'height']             // normal height when zoomed in
+          9, ['*', ['get', 'height'], 6],   
         ],
 
         'fill-extrusion-base': [
           'interpolate',
           ['linear'],
           ['zoom'],
-          9, ['*', ['get', 'min_height'], 6],
-          11, ['*', ['get', 'min_height'], 3],
-          13, ['get', 'min_height']
+          9, ['*', ['get', 'min_height'], 6]
     ],
 
         'fill-extrusion-opacity': 0.6
@@ -101,12 +102,12 @@ map.on('load', async () => {
     labelLayerId
   );
 
-  // Borders
+  // Equity tract borders
   map.addLayer({
-    id: 'neighborhoods-borders',
+    id: 'equity-borders',
     type: 'line',
-    source: 'neighborhoods',
-    paint: { 'line-color': 'rgba(138, 137, 137, 1)', 'line-width': 1 }
+    source: 'equity',
+    paint: { 'line-color': 'rgba(255, 255, 255, 0.35)', 'line-width': 1 }
   });
 
   // Points
@@ -131,18 +132,26 @@ map.on('load', async () => {
     }
   });
 
-  //Bar chart 
-  const neighborhoodNames = neighborhoods.features.map(f => f.properties.L_HOOD);
-  const dumpingCounts = neighborhoods.features.map(f => f.properties.dumping_count);
+  // Chart A: Dumping Frequency by Equity Quintile (1–5)
+  const QUINTILE_ORDER = ['Lowest', 'Second Lowest', 'Middle', 'Second Highest', 'Highest Equity Priority'];
+  const quintileToNum = {};
+  QUINTILE_ORDER.forEach((q, i) => { quintileToNum[q] = i + 1; });
 
-  const ctx = document.getElementById('dumpingChart').getContext('2d');
-  const dumpingChart = new Chart(ctx, {
+  const quintileCounts = [0, 0, 0, 0, 0];
+  equityIndex.features.forEach(f => {
+    const q = f.properties.COMPOSITE_QUINTILE;
+    const idx = quintileToNum[q];
+    if (idx != null) quintileCounts[idx - 1] += f.properties.dumping_count || 0;
+  });
+
+  const ctxQuintile = document.getElementById('quintileChart').getContext('2d');
+  new Chart(ctxQuintile, {
     type: 'bar',
     data: {
-      labels: neighborhoodNames,
+      labels: ['1', '2', '3', '4', '5'],
       datasets: [{
-        label: 'Illegal Dumpings',
-        data: dumpingCounts,
+        label: 'Illegal Dumping Reports',
+        data: quintileCounts,
         backgroundColor: '#E74C3C'
       }]
     },
@@ -151,24 +160,27 @@ map.on('load', async () => {
       maintainAspectRatio: false,
       plugins: { legend: { display: false } },
       scales: {
-        y: { beginAtZero: true, title: { display: true, text: 'Dumping Reports' } },
-        x: { title: { display: true, text: 'Neighborhood' } }
+        y: { beginAtZero: true, title: { display: true, text: 'Count of Illegal Dumping Reports' } },
+        x: { title: { display: true, text: 'Composite Quintile' } }
       }
     }
   });
 
-  //Neighborhood Dumpings Hover
-  map.on('mousemove', 'neighborhoods-layer', e => {
-    const name = e.features[0].properties.L_HOOD;
-    const count = e.features[0].properties.dumping_count;
+  // Equity tract hover (vulnerability + dumping count for correlation)
+  map.on('mousemove', 'equity-layer', e => {
+    const p = e.features[0].properties;
+    const name = p.NAMELSAD || p.NAME || 'Tract';
+    const quintile = p.COMPOSITE_QUINTILE || '—';
+    const score = p.COMPOSITE_SCORE != null ? (p.COMPOSITE_SCORE * 100).toFixed(1) + '%' : '—';
+    const dumpings = p.dumping_count ?? 0;
     map.getCanvas().style.cursor = 'pointer';
-    document.querySelector('#legend .legend-title').textContent =
-      `Dumpings: ${name} (${count})`;
+    document.querySelector('#legend .legend-equity-title').textContent =
+      `Equity: ${name} — ${quintile} (${score}) · Dumpings: ${dumpings}`;
   });
 
-  map.on('mouseleave', 'neighborhoods-layer', () => {
+  map.on('mouseleave', 'equity-layer', () => {
     map.getCanvas().style.cursor = '';
-    document.querySelector('#legend .legend-title').textContent = 'Dumpings:';
+    document.querySelector('#legend .legend-equity-title').textContent = 'Equity (hover tract):';
   });
 
   // Reset button

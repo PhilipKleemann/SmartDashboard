@@ -23,29 +23,30 @@
   <p class="legend-point"><span class="color-dumping"></span> Illegal Dumping</p>
   <p class="legend-point"><span class="color-underdrains"></span> Underdrains</p>
 
-  <!-- Neighborhood Choropleth -->
-  <p class="legend-title">Dumpings:</p>
+  <!-- Equity Index choropleth (systemic disadvantage) -->
+  <p class="legend-equity-title">Equity (hover tract):</p>
   <div class="legend-item">
-    <div class="legend-color" data-level="low"></div> Low
+    <div class="legend-color" data-level="low"></div> Lowest
   </div>
   <div class="legend-item">
-    <div class="legend-color" data-level="med-low"></div> Medium-Low
+    <div class="legend-color" data-level="med-low"></div> Second Lowest
   </div>
   <div class="legend-item">
-    <div class="legend-color" data-level="medium"></div> Medium
+    <div class="legend-color" data-level="medium"></div> Middle
   </div>
   <div class="legend-item">
-    <div class="legend-color" data-level="med-high"></div> Medium-High
+    <div class="legend-color" data-level="med-high"></div> Second Highest
   </div>
   <div class="legend-item">
-    <div class="legend-color" data-level="high"></div> High
+    <div class="legend-color" data-level="high"></div> Highest Equity Priority
   </div>
 </div>
 
-    <div id="chart">
-      <canvas id="dumpingChart"></canvas>
+    <div id="chart-quintile" class="chart-panel">
+      <h4 class="chart-title">Chart A: Dumping Frequency by Equity Quintile</h4>
+      <canvas id="quintileChart"></canvas>
     </div>
-
+    
     <button id="reset">Reset Map</button>
   </div>
 
@@ -55,6 +56,7 @@
   <script src="https://api.mapbox.com/mapbox-gl-js/v3.18.1/mapbox-gl.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
   <script src="js/main.js"></script>
 
 </body>
