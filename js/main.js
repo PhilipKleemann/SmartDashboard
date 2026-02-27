@@ -41,6 +41,8 @@ map.on('load', async () => {
   map.addSource('equity', { type: 'geojson', data: equityIndex });
   map.addSource('dumping', { type: 'geojson', data: 'assets/dumping.geojson' });
   map.addSource('underdrains', { type: 'geojson', data: 'assets/underdrains.geojson' });
+  map.addSource('waste-facility', { type: 'geojson', data: 'assets/waste_facility.geojson' });
+
 
   // Equity Index choropleth only (composite quintile — most disadvantage = darkest)
   map.addLayer({
@@ -115,7 +117,28 @@ map.on('load', async () => {
     id: 'underdrains-layer',
     type: 'circle',
     source: 'underdrains',
-    paint: { 'circle-radius': 7, 'circle-color': '#3498DB' }
+    paint: {
+      'circle-radius': 6,
+      'circle-color': '#3498DB',
+      'circle-opacity': 0.8,
+      'circle-stroke-opacity': 0.8,
+      'circle-stroke-width': 1,
+      'circle-stroke-color': 'hsla(0, 0%, 100%, 1.00)'
+    }
+  });
+
+  map.addLayer({
+    id: 'waste-facility-layer',
+    type: 'circle',
+    source: 'waste-facility',
+    paint: {
+      'circle-radius': 6,
+      'circle-color': '#16ad34ff',
+      'circle-opacity': 0.8,
+      'circle-stroke-opacity': 0.8,
+      'circle-stroke-width': 10,
+      'circle-stroke-color': 'hsla(0, 0%, 100%, 1.00)'
+    }
   });
 
   map.addLayer({

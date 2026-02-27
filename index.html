@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -21,6 +22,7 @@
 
   <!-- Point Layers -->
   <p class="legend-point"><span class="color-dumping"></span> Illegal Dumping</p>
+  <p class="legend-point"><span class="color-waste-facility"></span> Waste Facility's</p>
   <p class="legend-point"><span class="color-underdrains"></span> Underdrains</p>
 
   <!-- Equity Index choropleth (systemic disadvantage) -->
@@ -46,7 +48,7 @@
       <h4 class="chart-title">Chart A: Dumping Frequency by Equity Quintile</h4>
       <canvas id="quintileChart"></canvas>
     </div>
-    
+
     <button id="reset">Reset Map</button>
   </div>
 
