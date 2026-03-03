@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Equity Index Choropleth</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="sidebar">
+    <h2>Equity Index Choropleth</h2>
+    <div id="legend">
+      <h3>Equity Priority</h3>
+      <div class="legend-item"><div class="legend-color" data-level="low"></div>Lowest</div>
+      <div class="legend-item"><div class="legend-color" data-level="med-low"></div>Second Lowest</div>
+      <div class="legend-item"><div class="legend-color" data-level="medium"></div>Middle</div>
+      <div class="legend-item"><div class="legend-color" data-level="med-high"></div>Second Highest</div>
+      <div class="legend-item"><div class="legend-color" data-level="high"></div>Highest Equity Priority</div>
+    </div>
+  </div>
+
+  <div id="map"></div>
+
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoicGhpbGlwa2xlZW1hbm4yIiwiYSI6ImNtaWp5c2p2MDE2a3IzZXBtYnBjeDliNGoifQ.o5jwuQrTIuQ983mQAx4BwQ';
+
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/dark-v10',
+      center: [-122.33, 47.61],
+      zoom: 11
+    });
+
+    map.addControl(new mapboxgl.NavigationControl());
+
+    map.on('load', async () => {
+      const equityIndex = await fetch('assets/equity_index.geojson').then(res => res.json());
+
+      equityIndex.features.forEach((f, i) => f.id = 'eq-' + i);
+
+      map.addSource('equity', { type: 'geojson', data: equityIndex });
+
+      map.addLayer({
+        id: 'equity-layer',
+        type: 'fill',
+        source: 'equity',
+        paint: {
+          'fill-color': [
+            'match',
+            ['get', 'COMPOSITE_QUINTILE'],
+            'Highest Equity Priority', '#253494',
+            'Second Highest', '#2c7fb8',
+            'Middle', '#41b6c4',
+            'Second Lowest', '#a1dab4',
+            'Lowest', '#ffffcc',
+            '#b0b0b0'
+          ],
+          'fill-opacity': 0.7
+        }
+      });
+
+      map.addLayer({
+        id: 'equity-borders',
+        type: 'line',
+        source: 'equity',
+        paint: { 'line-color': '#fff', 'line-opacity': 0.35, 'line-width': 1 }
+      });
+
+      // Hover info
+      map.on('mousemove', 'equity-layer', e => {
+        const p = e.features[0].properties;
+        map.getCanvas().style.cursor = 'pointer';
+        document.querySelector('#legend h3').textContent = 
+          `${p.NAMELSAD || 'Tract'} – ${p.COMPOSITE_QUINTILE || '—'}`;
+      });
+      map.on('mouseleave', 'equity-layer', () => {
+        map.getCanvas().style.cursor = '';
+        document.querySelector('#legend h3').textContent = 'Equity Priority';
+      });
+    });
+  </script>
+</body>
+</html>
