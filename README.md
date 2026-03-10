@@ -1,5 +1,13 @@
 # Seattle Dumping & Equity Dashboard
 
+---
+
+## Webmap Link
+Live Webmap:  
+[Click here to view the map](https://philipkleemann.github.io/Group_01_FinalProject/)
+
+---
+
 ## Team Members
 - Philip Kleemann
 - Andrew Frederick
@@ -16,11 +24,10 @@ Overall, the goal of this project is to be able to visualize a clear understandi
 
 ---
 
-## Webmap Link
-Live Webmap:  
-[Click here to view the map](https://philipkleemann.github.io/Group_01_FinalProject/)
 
----
+
+
+
  
 ## Data Source Used
 
