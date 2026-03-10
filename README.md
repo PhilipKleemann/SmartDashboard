@@ -1,7 +1,11 @@
 # Seattle Waste Dumpings
 
-## AI Disclosure 
-No AI tools were used in this assignment.
+## Team Members
+- Philip Kleemann
+- Andrew Frederick
+- Willy Hung
+- Philip de Leon
+- Said Mohammed 
 
 ---
 
@@ -22,3 +26,5 @@ Live Webmap:
 
 - [Seattle Open Data](https://data.seattle.gov/)
 
+## AI Disclosure 
+No AI tools were used in this assignment.
