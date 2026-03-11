@@ -32,7 +32,7 @@ Figure 1: Chloropleth map displaying the distribution of illegal dumping reports
 
 Figure 2: Dashboard which the title, legend, and bar chart which help the viewer interpet the map and compare the illegal dumping reports and the levels of equity priority across census tracts.
 
-<img src="img/ss2.png" width="700" height="700>
+<img src="img/ss2.png" width="700" height="700">
 
 
  
