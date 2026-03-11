@@ -24,9 +24,15 @@ Overall, the goal of this project is to be able to visualize a clear understandi
 
 ---
 
-![View of Map](img/ss1.png)
-![Legend & Bar Chart](img/ss2.png)
+Figure 1: Chloropleth map displaying the distribution of illegal dumping reports and level of equity priority across census tracts.
 
+![View of Map](img/ss1.png)
+<img src="img/ss1.png" width="700">
+
+Figure 2: Dashboard which the title, legend, and bar chart which help the viewer interpet the map and compare the illegal dumping reports and the levels of equity priority across census tracts.
+
+![Legend & Bar Chart](img/ss2.png)
+<img src="img/ss2.png" width="700">
 
  
 ## Data Source Used
