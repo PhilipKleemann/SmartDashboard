@@ -39,6 +39,8 @@ Figure 2: Dashboard which the title, legend, and bar chart which help the viewer
 ## Data Source Used
 
 - [Seattle Open Data](https://data.seattle.gov/)
+- [Mapbox](https://www.mapbox.com/)
+- [King County Waste Facilities](https://kingcounty.gov/en/dept/dnrp/waste-services/garbage-recycling-compost/solid-waste-facilities)
 
 ---
 
