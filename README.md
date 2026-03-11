@@ -44,7 +44,11 @@ Figure 2: Dashboard which the title, legend, and bar chart which help the viewer
 
 ## Libraries 
 - Mapbox Gl JS - Used to create the interactive web map, points, polygons, navigation tools, 3D buildings.
-- Chart.js Used to creat the bar chart that shows the
+- Chart.js Used to creat the bar chart that shows the number of illegal dumpings by level of equity priority.
+- Turf.js - Used to do spatial analysis, specifically for calculating whether the illegal dumping points are within the census tracts.
+- D3.js - Implemented just in case we needed it.
+
+---
 
 ## AI Disclosure 
 No AI tools were used in this assignment.
