@@ -41,7 +41,6 @@ map.on('load', async () => {
   map.addSource('neighborhoods', { type: 'geojson', data: neighborhoods });
   map.addSource('equity', { type: 'geojson', data: equityIndex });
   map.addSource('dumping', { type: 'geojson', data: 'assets/dumping.geojson' });
-  map.addSource('underdrains', { type: 'geojson', data: 'assets/underdrains.geojson' });
   map.addSource('waste-facility', { type: 'geojson', data: wasteFacilityData });
 
 
@@ -114,20 +113,6 @@ map.on('load', async () => {
   });
 
   // Points
-  map.addLayer({
-    id: 'underdrains-layer',
-    type: 'circle',
-    source: 'underdrains',
-    paint: {
-      'circle-radius': 6,
-      'circle-color': '#3498DB',
-      'circle-opacity': 0.8,
-      'circle-stroke-opacity': 0.8,
-      'circle-stroke-width': 1,
-      'circle-stroke-color': 'hsla(0, 0%, 100%, 1.00)'
-    }
-  });
-
   map.addLayer({
     id: 'dumping-layer',
     type: 'circle',
