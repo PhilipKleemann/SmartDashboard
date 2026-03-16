@@ -196,4 +196,19 @@ map.on('load', async () => {
     map.flyTo({ center: [-122.33, 47.61], zoom: 10.7, pitch: 0, bearing: 0 });
   });
 
+  
+
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const modal = document.getElementById("welcome-modal");
+  const closeBtn = document.getElementById("close-modal");
+
+  modal.classList.remove("hidden");
+
+  closeBtn.addEventListener("click", () => {
+    modal.classList.add("hidden");
+  });
+
 });
