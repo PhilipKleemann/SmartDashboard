@@ -37,10 +37,76 @@ map.on('load', async () => {
   neighborhoods.features.forEach((f, i) => f.id = i);
   equityIndex.features.forEach((f, i) => f.id = 'eq-' + i);
 
+  const timeSlider = document.getElementById('time-slider');
+  const timeSliderText = document.getElementById('time-slider-text');
+  const timeSliderCount = document.getElementById('time-slider-count');
+
+  const MS_PER_DAY = 24 * 60 * 60 * 1000;
+  let minTime = Infinity;
+  let maxTime = -Infinity;
+
+  dumpingData.features.forEach(f => {
+    const created = f.properties && f.properties.CREATED_DATE;
+    const t = created ? Date.parse(created) : NaN;
+    if (!Number.isNaN(t)) {
+      f.properties._timeMs = t;
+      if (t < minTime) minTime = t;
+      if (t > maxTime) maxTime = t;
+    }
+  });
+
+  if (Number.isFinite(minTime) && Number.isFinite(maxTime)) {
+    const minDay = 0;
+    const maxDay = Math.max(0, Math.round((maxTime - minTime) / MS_PER_DAY));
+
+    dumpingData.features.forEach(f => {
+      const t = f.properties._timeMs;
+      if (Number.isFinite(t)) {
+        f.properties._dayIndex = Math.round((t - minTime) / MS_PER_DAY);
+      }
+    });
+
+    if (timeSlider && timeSliderText && timeSliderCount) {
+      timeSlider.min = String(minDay);
+      timeSlider.max = String(maxDay);
+      timeSlider.value = String(maxDay);
+
+      const formatDate = ms =>
+        new Date(ms).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+
+      const updateTimeUI = () => {
+        const currentDay = Number(timeSlider.value);
+        const currentTime = minTime + currentDay * MS_PER_DAY;
+        timeSliderText.textContent =
+          `Showing illegal dumping reports from ${formatDate(minTime)} to ${formatDate(currentTime)}.`;
+
+        const visibleCount = dumpingData.features.reduce((acc, f) => {
+          const dayIndex = f.properties && f.properties._dayIndex;
+          if (Number.isFinite(dayIndex) && dayIndex <= currentDay) return acc + 1;
+          return acc;
+        }, 0);
+
+        timeSliderCount.textContent = `Dumping reports: ${visibleCount.toLocaleString()}`;
+      };
+
+      updateTimeUI();
+
+      timeSlider.addEventListener('input', () => {
+        const currentDay = Number(timeSlider.value);
+        map.setFilter('dumping-layer', [
+          'all',
+          ['has', '_dayIndex'],
+          ['<=', ['get', '_dayIndex'], currentDay]
+        ]);
+        updateTimeUI();
+      });
+    }
+  }
+
   // Add Mapbox sources/layers
   map.addSource('neighborhoods', { type: 'geojson', data: neighborhoods });
   map.addSource('equity', { type: 'geojson', data: equityIndex });
-  map.addSource('dumping', { type: 'geojson', data: 'assets/dumping.geojson' });
+  map.addSource('dumping', { type: 'geojson', data: dumpingData });
   map.addSource('waste-facility', { type: 'geojson', data: wasteFacilityData });
 
 
@@ -174,26 +240,40 @@ map.on('load', async () => {
     }
   });
 
-  // Equity tract hover (vulnerability + dumping count for correlation)
-  map.on('mousemove', 'equity-layer', e => {
-    const p = e.features[0].properties;
-    const name = p.NAMELSAD || p.NAME || 'Tract';
+  const tractDetailsEl = document.getElementById('tract-details');
+
+  map.on('click', 'equity-layer', e => {
+    if (!e.features || !e.features.length || !tractDetailsEl) return;
+    const f = e.features[0];
+    const p = f.properties;
+    const name = p.NAMELSAD || p.NAME || 'Census tract';
     const quintile = p.COMPOSITE_QUINTILE || '—';
     const score = p.COMPOSITE_SCORE != null ? (p.COMPOSITE_SCORE * 100).toFixed(1) + '%' : '—';
     const dumpings = p.dumping_count ?? 0;
-    map.getCanvas().style.cursor = 'pointer';
-    document.querySelector('#legend .legend-equity-title').textContent =
-      `Equity: ${name} — ${quintile} (${score}) · Dumpings: ${dumpings}`;
-  });
 
-  map.on('mouseleave', 'equity-layer', () => {
-    map.getCanvas().style.cursor = '';
-    document.querySelector('#legend .legend-equity-title').textContent = 'Equity (hover tract):';
+    tractDetailsEl.innerHTML = `
+      <h5>${name}</h5>
+      <p><strong>Illegal dumping reports:</strong> ${dumpings}</p>
+      <p><strong>Level of equity priority:</strong> ${quintile}</p>
+      <p><strong>Equity score:</strong> ${score}</p>
+    `;
+
+    try {
+      const bounds = turf.bbox(f);
+      map.fitBounds(bounds, { padding: 60, maxZoom: 14 });
+    } catch (err) {
+      // If for some reason bbox fails, do nothing – map remains where it is.
+    }
   });
 
   // Reset button
   document.getElementById('reset').addEventListener('click', () => {
     map.flyTo({ center: [-122.33, 47.61], zoom: 10.7, pitch: 0, bearing: 0 });
+    if (tractDetailsEl) {
+      tractDetailsEl.innerHTML = `
+        <p>Click a census tract on the map to see its equity priority and number of illegal dumping reports.</p>
+      `;
+    }
   });
 
 });

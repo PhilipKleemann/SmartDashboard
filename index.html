@@ -24,31 +24,45 @@
 
    <h2>Seattle Illegal Dumping & Equity Dashboard</h2>
   
-   <div id="legend">
-     <h3>Legend</h3>
+  <div id="legend">
+    <h3>Legend</h3>
 
 
-     <p class="legend-point"><span class="color-dumping"></span> Illegal Dumping</p>
-     <p class="legend-point"><span class="color-waste-facility"></span> Waste Facilities</p>
+    <p class="legend-point"><span class="color-dumping"></span> Illegal Dumping</p>
+    <p class="legend-point"><span class="color-waste-facility"></span> Waste Facilities</p>
 
 
-     <p class="legend-equity-title">Level of Equity Priority (hover tract):</p>
-     <div class="legend-item">
-       <div class="legend-color" data-level="low"></div> (1) Lowest
-     </div>
-     <div class="legend-item">
-       <div class="legend-color" data-level="med-low"></div> (2) Second Lowest
-     </div>
-     <div class="legend-item">
-       <div class="legend-color" data-level="medium"></div> (3) Middle
-     </div>
-     <div class="legend-item">
-       <div class="legend-color" data-level="med-high"></div> (4) Second Highest
-     </div>
-     <div class="legend-item">
-       <div class="legend-color" data-level="high"></div> (5) Highest Equity Priority
-     </div>
-   </div>
+    <p class="legend-equity-title">Level of Equity Priority:</p>
+    <div class="legend-item">
+      <div class="legend-color" data-level="low"></div> (1) Lowest
+    </div>
+    <div class="legend-item">
+      <div class="legend-color" data-level="med-low"></div> (2) Second Lowest
+    </div>
+    <div class="legend-item">
+      <div class="legend-color" data-level="medium"></div> (3) Middle
+    </div>
+    <div class="legend-item">
+      <div class="legend-color" data-level="med-high"></div> (4) Second Highest
+    </div>
+    <div class="legend-item">
+      <div class="legend-color" data-level="high"></div> (5) Highest Equity Priority
+    </div>
+  </div>
+
+  <div id="tract-info" class="chart-panel">
+    <h4 class="chart-title">Selected Census Tract</h4>
+    <div id="tract-details">
+      <p>Click a census tract on the map to see its equity priority and number of illegal dumping reports.</p>
+    </div>
+  </div>
+
+  <div id="time-filter" class="chart-panel">
+    <h4 class="chart-title">Filter Illegal Dumpings by Date</h4>
+    <p id="time-slider-text">Loading date range…</p>
+    <input type="range" id="time-slider" min="0" max="100" value="100">
+    <p id="time-slider-count">Dumping reports: -</p>
+  </div>
 
 
    <div id="chart-quintile" class="chart-panel">
