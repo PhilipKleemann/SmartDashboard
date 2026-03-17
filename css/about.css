@@ -131,6 +131,24 @@ a {
     margin: 10px 0 0;
 }
 
+.ack-section h2::after {
+    content: "";
+    display: block;
+    width: 250px;
+    height: 4px;
+    background: #2D502E;
+    margin: 10px 0 0;
+}
+
+.lib-section h2::after {
+    content: "";
+    display: block;
+    width: 315px;
+    height: 4px;
+    background: #2D502E;
+    margin: 10px 0 0;
+}
+
 /* results section */
 .results {
     padding: 1rem 1rem;
@@ -240,6 +258,19 @@ a {
     .team-card {
         width: 100%;
     }
+}
+
+/* libraries and acknowledgements section */
+.library-list,
+.ack-list {
+    font-size: 1.15rem;
+    line-height: 1.6;
+    padding-left: 1.4rem;
+}
+
+.library-list li,
+.ack-list li {
+    margin-bottom: 0.6rem;
 }
 
 /* contact and sources section */
